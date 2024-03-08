@@ -13,7 +13,7 @@ class Users(Base):
     sex = sq.Column(sq.VARCHAR(128))
     age = sq.Column(sq.INTEGER)
     city = sq.Column(sq.VARCHAR(256))
-    vk_profile_id = sq.Column(sq.INTEGER, sq.ForeignKey("Photos.id"), nullable=False)
+    vk_profile_id = sq.Column(sq.INTEGER, nullable=False)
     photos = relationship("Photos", back_populates="user")
     blocked_status = relationship("Blocklist", uselist=False, back_populates="user")
     favourites = relationship("Favourites", back_populates="user")
@@ -39,7 +39,7 @@ class Photos(Base):
     __tablename__ = "Photos"
 
     id = sq.Column(sq.INTEGER, primary_key=True)
-    user_id = sq.Column(sq.INTEGER, nullable=False)
+    user_id = sq.Column(sq.INTEGER, sq.ForeignKey("Users.id"), nullable=False)
     user = relationship("Users", back_populates="photos")
     photo_url = sq.Column(sq.String(256))
     upload_date = sq.Column(sq.TIMESTAMP, server_default=sq.func.now())
@@ -91,14 +91,28 @@ class Search_Weights(Base):
     user_id = sq.Column(sq.INTEGER, sq.ForeignKey("Users.id"))
     age_weight = sq.Column(sq.INTEGER)
     gender_weight = sq.Column(sq.VARCHAR(128))
-    common_groups = sq.Column(sq.VARCHAR(128))
-    common_friends = sq.Column(sq.VARCHAR(128))
-    music_interest_weight = sq.Column(sq.VARCHAR(128))
-    book_interest_weight = sq.Column(sq.VARCHAR(128))
+    common_groups = sq.Column(sq.VARCHAR(256))
+    common_friends = sq.Column(sq.VARCHAR(256))
+    music_interest_weight = sq.Column(sq.VARCHAR(1000))
+    book_interest_weight = sq.Column(sq.VARCHAR(1000))
 
     def __str__(self):
         return f"Users {self.id}: {self.user_id}"
 
 
 def create_tables(engine):
+    """
+    This function creates all tables defined in the SQLAlchemy Base metadata.
+
+    The function uses the `create_all` method of the SQLAlchemy Base metadata object,
+    which creates all tables stored in the metadata. All table definitions are usually done
+    via the declarative base class and are accessible through the Base.metadata.tables dictionary.
+
+    The `create_all` method checks the database for the existence of each table, and if it doesn't exist,
+    the method creates it. Tables are created in the order of their foreign key dependencies.
+
+
+    :param engine: engine (sqlalchemy.engine.Engine): The engine instance which is used to interface with the database.
+    :return: None
+    """
     Base.metadata.create_all(engine)
