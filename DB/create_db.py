@@ -115,4 +115,5 @@ def create_tables(engine):
     :param engine: engine (sqlalchemy.engine.Engine): The engine instance which is used to interface with the database.
     :return: None
     """
+    # Base.metadata.drop_all(engine)
     Base.metadata.create_all(engine)
