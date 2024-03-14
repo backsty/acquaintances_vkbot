@@ -14,12 +14,12 @@ class Users(Base):
     age = sq.Column(sq.INTEGER)
     city = sq.Column(sq.VARCHAR(256))
     vk_profile_id = sq.Column(sq.INTEGER, nullable=False)
-    photos = relationship("Photos", back_populates="user")
-    blocked_status = relationship("Blocklist", uselist=False, back_populates="user")
-    favourites = relationship("Favourites", back_populates="user")
-    likes = relationship("Likes", back_populates="user")
+    photos = relationship("Photos", back_populates="Users")
+    blocked_status = relationship("Blocklist", uselist=False, back_populates="Users")
+    favourites = relationship("Favourites", back_populates="Users")
+    likes = relationship("Likes", back_populates="Users")
 
-    def __str__(self):
+    def __str__(self) -> str:
         return f"Users {self.id}: {self.name} {self.surname} {self.vk_profile_id}"
 
 
@@ -28,10 +28,10 @@ class Blocklist(Base):
 
     id = sq.Column(sq.Integer, primary_key=True)
     user_id = sq.Column(sq.Integer, sq.ForeignKey("Users.id"))
-    user = relationship("Users", back_populates="blocked_status")
+    user = relationship("Users", back_populates="Blocklist")
     is_blocked = sq.Column(sq.Boolean)
 
-    def __str__(self):
+    def __str__(self) -> str:
         return f"User {self.user_id} Status: Blocked - {self.is_blocked}"
 
 
@@ -40,11 +40,11 @@ class Photos(Base):
 
     id = sq.Column(sq.INTEGER, primary_key=True)
     user_id = sq.Column(sq.INTEGER, sq.ForeignKey("Users.id"), nullable=False)
-    user = relationship("Users", back_populates="photos")
+    user = relationship("Users", back_populates="Photos")
     photo_url = sq.Column(sq.String(256))
     upload_date = sq.Column(sq.TIMESTAMP, server_default=sq.func.now())
 
-    def __str__(self):
+    def __str__(self) -> str:
         return f"Users {self.id}: {self.user_id} {self.photo_url}"
 
 
@@ -55,9 +55,9 @@ class Likes(Base):
     photo_id = sq.Column(sq.INTEGER, sq.ForeignKey("Photos.id"), nullable=False)
     status_like = sq.Column(sq.BOOLEAN)
     user_id = sq.Column(sq.INTEGER, sq.ForeignKey("Users.id"))
-    user = relationship("Users", back_populates="likes")
+    user = relationship("Users", back_populates="Likes")
 
-    def __str__(self):
+    def __str__(self) -> str:
         return f"Users {self.user_id}: {self.photo_id} {self.id} {self.status_like}"
 
 
@@ -66,10 +66,10 @@ class Favourites(Base):
 
     id = sq.Column(sq.INTEGER, primary_key=True)
     user_id = sq.Column(sq.INTEGER, sq.ForeignKey("Users.id"), nullable=False)
-    user = relationship("Users", back_populates="favourites")
-    photo_id = sq.Column(sq.VARCHAR(128), sq.ForeignKey("Photos.id"), nullable=False)
+    user = relationship("Users", back_populates="Favourites")
+    photo_id = sq.Column(sq.INTEGER, sq.ForeignKey("Photos.id"), nullable=False)
 
-    def __str__(self):
+    def __str__(self) -> str:
         return f"Users {self.id}: {self.user_id} {self.photo_id}"
 
 
@@ -80,7 +80,7 @@ class Matches(Base):
     user_id_receiver = sq.Column(sq.INTEGER, sq.ForeignKey("Users.id"))
     user_id_sender = sq.Column(sq.INTEGER, sq.ForeignKey("Users.id"))
 
-    def __str__(self):
+    def __str__(self) -> str:
         return f"Users {self.id}: {self.user_id_receiver} - {self.user_id_sender}"
 
 
@@ -96,7 +96,7 @@ class Search_Weights(Base):
     music_interest_weight = sq.Column(sq.VARCHAR(1000))
     book_interest_weight = sq.Column(sq.VARCHAR(1000))
 
-    def __str__(self):
+    def __str__(self) -> str:
         return f"Users {self.id}: {self.user_id}"
 
 
