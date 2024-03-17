@@ -29,7 +29,7 @@ class Blocklist(Base):
     id = sq.Column(sq.Integer, primary_key=True)
     user_id = sq.Column(sq.Integer, sq.ForeignKey("Users.id"))
     user = relationship("Users", back_populates="Blocklist")
-    is_blocked = sq.Column(sq.Boolean)
+    target_id = sq.Column(sq.Integer, nullable=False)
 
     def __str__(self) -> str:
         return f"User {self.user_id} Status: Blocked - {self.is_blocked}"
@@ -67,7 +67,7 @@ class Favourites(Base):
     id = sq.Column(sq.INTEGER, primary_key=True)
     user_id = sq.Column(sq.INTEGER, sq.ForeignKey("Users.id"), nullable=False)
     user = relationship("Users", back_populates="Favourites")
-    photo_id = sq.Column(sq.INTEGER, sq.ForeignKey("Photos.id"), nullable=False)
+    favourite_id = sq.Column(sq.INTEGER, nullable=False)
 
     def __str__(self) -> str:
         return f"Users {self.id}: {self.user_id} {self.photo_id}"
