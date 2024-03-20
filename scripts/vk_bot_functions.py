@@ -1,3 +1,5 @@
+import requests
+
 from datetime import date
 
 
@@ -49,6 +51,29 @@ def get_common_params(token_):
         'access_token': token_,
         'v': '5.154'
     }
+
+
+def get_user_data(base_url, token, user_id):
+    url = build_url(base_url, "users.get?")
+    params = get_common_params(token)
+    params.update({
+        "user_ids": user_id,
+        "fields": "sex,first_name,last_name,deactivated,is_closed,bdate,books,city,interests,movies,music,relation"
+    })
+    response = requests.get(url, params=params)
+    try:
+        response = response.json()['response'][0]
+    except KeyError:
+        return None
+    if 'bdate' in response.keys():
+        response['age'] = culc_age(response['bdate'])
+        del response['bdate']
+    else:
+        response['age'] = 0
+    return response
+
+
+
 
 
 # Также сюда нужно будет добавить следующие функции для упрощения работы:
